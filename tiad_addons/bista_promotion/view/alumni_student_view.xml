@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+         <!--============== Action for Alimni Student =================-->
+        <record id="action_alumni_student" model="ir.actions.act_window">
+            <field name="name">Alumni Student</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban</field>
+            <field name="domain">[('active','=',False),('strike_off','=',False)]</field>
+        </record>
+        
+        <record id="action_alumni_student_kanban_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="bista_edu.student_parent_kanban_view"/>
+            <field name="act_window_id" ref="action_alumni_student"/>
+        </record> 
+        
+<!--        <record id="action_alumni_student_form_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="bista_edu.view_student_parent_form"/>
+            <field name="act_window_id" ref="action_alumni_student"/>
+        </record>-->
+    </data>
+</openerp>

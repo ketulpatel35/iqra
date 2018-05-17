@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+                string="Student Payment Report"
+                id="action_student_payment_report"
+                model="student.payment.report.wiz"
+                report_type="qweb-pdf"
+                name="bista_edu_fee.report_student_payment"
+                file="bista_edu_fee.report_student_payment"
+                />
+
+        <template id="report_student_payment">
+            <t t-foreach="docs" t-as="o">
+                <!--    <t t-call="bista_edu.custom_receipt_external_layout">-->
+                <t t-call="report.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div class="row mt32 mb32">
+                            <!--                <div><center><h1>Student Fee Payment</h1></center></div><br/><br/><br/>-->
+                            <table class="table table-bordered" width="100%" height="100%"
+                                   style="border: 2px solid #000000;font-size:13px">
+                                <tbody>
+                                    <tr>
+                                        <td height="10%" width="15%">Student Name:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.student_id.name"/>
+                                        </td>
+                                        <td height="10%" width="15%">Student ID:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.student_id.student_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height="10%" width="15%">Class:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.student_id.class_id.name"/>
+                                        </td>
+                                        <td height="10%" width="15%">Section:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.student_id.student_section_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height="10%" width="15%">Transaction from date:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.date_from"/>
+                                        </td>
+                                        <td height="10%" width="15%">Transaction to date:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.date_to"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height="10%" width="15%">Date of Report:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.date_today"/>
+                                        </td>
+                                        <td height="10%" width="15%">Downloaded By:</td>
+                                        <td height="10%" width="35%">
+                                            <span t-field="o.user.name"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered" height="100%" width="100%"
+                                   style="border: 2px solid #000000;font-size:13px">
+                                <thead>
+                                    <tr style="border: 1px solid black;">
+                                        <th height="10%" width="20%" class="text-center"
+                                            style="border: 2px solid black;">
+                                            <strong>Date</strong>
+                                        </th>
+                                        <th height="10%" width="20%" class="text-center"
+                                            style="border: 2px solid black;">
+                                            <strong>Invoice Number</strong>
+                                        </th>
+                                        <th height="10%" width="20%" class="text-center"
+                                            style="border: 2px solid black;">
+                                            <strong>Description</strong>
+                                        </th>
+                                        <th height="10%" width="20%" class="text-right"
+                                            style="border: 2px solid black;">
+                                            <strong>Debit Amount</strong>
+                                        </th>
+                                        <th height="10%" width="20%" class="text-right"
+                                            style="border: 2px solid black;">
+                                            <strong>Credit Amount</strong>
+                                        </th>
+                                        <th height="10%" width="20%" class="text-right"
+                                            style="border: 2px solid black;">
+                                            <strong>Running Balance</strong>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--row for past balance-->
+                                    <tr style="border: 1px solid black;">
+                                        <td height="10%" width="20%" class="text-center"
+                                            style="border: 1px solid black;">
+                                        </td>
+                                        <td height="10%" width="20%" class="text-center"
+                                            style="border: 1px solid black;">
+                                        </td>
+                                        <td height="10%" width="20%" class="text-center"
+                                            style="border: 1px solid black;">
+                                            <strong>Opening Balance :</strong>
+                                        </td>
+                                        <td height="10%" width="20%" class="text-center"
+                                            style="border: 1px solid black;">
+                                            <span t-field="o.past_balance"/>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                0
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-esc="o.calc_current_running_balance(o.past_balance,0)"/>
+                                            </td>
+                                        </td>
+                                    </tr>
+
+                                    <!--row for invoice lines-->
+                                    <t t-set="foo" t-value="0"/>
+                                    <t t-set="advance_pay" t-value="0"/>
+                                    <t t-set="move_ids_str" t-value="''"/>
+                                    <t t-foreach="o.invoice_ids" t-as="invoice_obj">
+                                        <tr t-foreach="invoice_obj.invoice_line" t-as="line"
+                                            style="border: 1px solid black;page-break-inside: avoid!important">
+                                            <t t-set="foo" t-value="foo+1"/>
+                                            <td height="10%" width="15%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-field="invoice_obj.date_invoice"/>
+                                                <!--                                    <strong><t t-esc="invoice_obj.date_invoice"/> </strong>-->
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-field="invoice_obj.number"/>
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-field="line.price_subtotal"/>
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                0
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center"
+                                                style="border: 1px solid black;">
+                                                <span t-esc="o.calc_current_running_balance(line.price_subtotal,0)"/>
+                                            </td>
+                                        </tr>
+
+                                        <!--row for payment lines-->
+                                        <t t-if="invoice_obj.payment_ids.ids">
+                                            <tr t-foreach="invoice_obj.payment_ids" t-as="pay_line"
+                                                style="border: 1px solid black;">
+                                                <t t-set="foo" t-value="foo+1"/>
+                                                <td height="10%" width="15%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    <t t-if="pay_line.ids">
+                                                        <span t-field="pay_line.date"/>
+                                                    </t>
+                                                </td>
+                                                <td height="10%" width="20%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    <span t-field="invoice_obj.number"/>
+                                                </td>
+                                                <td height="10%" width="20%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    <span t-field="pay_line.ref"/>
+                                                </td>
+                                                <td height="10%" width="20%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    0.0
+                                                </td>
+                                                <td height="10%" width="20%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    <span t-field="pay_line.credit"/>
+                                                </td>
+                                                <td height="10%" width="20%" class="text-center"
+                                                    style="border: 1px solid black;">
+                                                    <span t-esc="o.calc_current_running_balance(0,pay_line.credit)"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+
+                                    <!--row for advance payment--> 
+                                    <t t-set="foo" t-value="0"/>
+                                    <tr t-foreach="o.voucher_ids" t-as="voucher_obj">
+                                        <t t-if ="len(voucher_obj.line_cr_ids) == 0">
+                                            <t t-set="foo" t-value="foo+1"/>
+                                            <td height="10%" width="15%" class="text-center" style="border: 1px solid black;">
+                                                <span t-field="voucher_obj.date"/> 
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                Advance Payment
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                <span t-field="voucher_obj.number"/> 
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                0
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                0 
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                <span t-esc="voucher_obj.amount"/> 
+                                            </td>
+                                            <td height="10%" width="20%" class="text-center" style="border: 1px solid black;">
+                                                <span t-esc="o.calc_current_running_balance(-(voucher_obj.amount),0)"/> 
+                                            </td>
+                                            
+                                        </t>
+                                    </tr>
+                                    
+                                    <!--row for total balance,debit and credit-->
+                                    <tr>
+                                        <td class="text-left" style="border: 1px solid black;">
+                                            <strong>Total Balance:</strong>
+                                        </td>
+                                        <td class="text-left" style="border: 1px solid black;">
+                                            <strong>
+                                                <t t-esc="sum(l.residual for l in o.invoice_ids) + o.past_balance - sum(l.amount for l in o.voucher_ids)"/>
+                                            </strong>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-left" style="border: 1px solid black;">
+                                            <strong>Debit:
+                                                <t t-esc="sum(l.amount_total for l in o.invoice_ids)+o.past_balance"/>
+                                            </strong>
+                                        </td>
+
+                                        <td class="text-left" style="border: 1px solid black;">
+                                            <strong>Credit:
+                                                <t t-esc="sum(l.amount_total-l.residual for l in o.invoice_ids)+sum(l.amount for l in o.voucher_ids)"/>
+                                            </strong>
+                                        </td>
+                                        <td height="10%" width="20%" class="text-center"
+                                            style="border: 1px solid black;">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--    </t>-->
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>

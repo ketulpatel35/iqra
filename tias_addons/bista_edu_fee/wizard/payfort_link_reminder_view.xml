@@ -1,0 +1,33 @@
+<openerp>
+    <data>
+        <!-- Form view for resend payfort link Wizard -->
+        <record id="resend_payfort_link_wiz_view" model="ir.ui.view">
+            <field name="name">resend.payfort.link.wiz.view</field>
+            <field name="model">resend.payfort.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Resend Payfort Wizard">
+                    <group>
+                        <field name="class_id"/>
+                        <field name="section_id"/>
+                        <field name="parent_ids" domain="[('is_parent','=',True),('is_student','=',False)]"/>
+                    </group>
+                    <footer>
+                        <button name="resend_payfort_link" string="Resend Payfort Link" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_resend_payfort_wiz_view"
+            name="Resend Payfort Link"
+            res_model="resend.payfort.wiz"
+            target="new"
+            view_type="form"
+            view_mode="form"
+            key2="client_action_multi"/>
+
+    </data>
+</openerp>

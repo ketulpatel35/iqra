@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <report 
+        string="Fees Payment Receipt" 
+        id="action_fees_payment_receipt" 
+        model="account.voucher" 
+        report_type="qweb-pdf"
+        name="bista_edu_fee.report_fee_payment_receipt" 
+        file="bista_edu_fee.report_fee_payment_receipt"
+         />
+    
+<template id="report_fee_payment_receipt">
+    <t t-foreach="docs" t-as="o">
+    <t t-call="bista_edu.custom_receipt_external_layout">
+        <div class="page">
+            <dssiv class="oe_structure"/>
+            <div class="row mt32 mb32">
+                <div><center><h1>Payment Receipt</h1></center></div><br/><br/><br/>
+                <div class="col-xs-4">
+                    <strong>Receipt No:  <span t-field="o.number"/></strong>
+                </div>
+                
+                <div class="col-xs-4">
+                    <t t-if="o.partner_id.is_parent==True">                   
+                    <strong>Class:  <span t-esc="o.students_class(o)"/></strong>
+                    </t> 
+                    <t t-if="o.partner_id.is_student==True">                   
+                    <strong>Class:  <span t-esc="o.partner_id.class_id.name"/></strong>
+                    </t> 
+                </div>
+                <t t-if="o.partner_id.is_student==True">
+                    <div class="col-xs-4">
+                        <strong>Academic Year:  <span t-field="o.partner_id.year_id.name"/></strong>
+                    </div>
+                </t>
+                <t t-if="o.partner_id.is_parent==True">
+                    <div class="col-xs-4">
+                        <strong>Academic Year:  <span t-esc="o.academic_years(o.partner_id)"/></strong>
+                    </div>
+                </t>
+            </div>
+            
+            
+            
+            
+            <div class="row mt32 mb32">
+                <div class="col-xs-4">
+                    <strong>Name:  <span t-field="o.partner_id.name"/> </strong>
+                </div>
+                <t t-if="o.partner_id.is_parent==True">
+                    <div class="col-xs-4">
+                    <strong>Child's Name:  <span t-esc="o.childs_name(o)"/></strong>
+                    </div>
+                </t>
+                <t t-if="o.partner_id.is_student==True">
+                    <div class="col-xs-4">
+                    <strong>Student ID:  <span t-esc="o.partner_id.student_id"/></strong>
+                    </div>
+                </t>
+                <div class="col-xs-4">
+                    <strong>Date:  <span t-field="o.date"/></strong>
+                </div>
+            </div>
+            <t t-if="o.state=='posted'">
+                <table class="table table-bordered" width="100%" height="100%" style="border: 2px solid #000000;font-size:13px">
+                    <thead>
+                        <tr style="border: 1px solid black;">
+                            <th  height="10%" width="30%" class="text-center" style="border: 1px solid black;"><strong>SI.No: 1</strong></th>
+                            <th  height="10%" width="35%" class="text-center" style="border: 1px solid black;"><strong>Paid Amount by <span  t-field="o.journal_id.name"/> </strong></th>
+                            <th height="10%"  width="35%" class="text-right" style="border: 1px solid black;"><strong> <span  t-field="o.amount"/>  AED</strong></th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+            
+              <div class="row mt32 mb32">
+                <div class="col-xs-12" style="text-align:center">
+                    <p>This is a computer generated invoice and does not require signature. Online, cheque and bank transfer payment subject to realisation.</p>
+                </div>
+            </div> 
+            </t>  
+        </div>
+    </t>
+    </t>
+</template>
+
+</data>
+</openerp>
+    
+

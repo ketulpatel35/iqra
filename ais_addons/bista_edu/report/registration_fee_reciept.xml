@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <report 
+        string="Fee Receipt" 
+        id="action_fee_receipt" 
+        model="registration" 
+        report_type="qweb-pdf"
+        name="bista_edu.report_fee_receipt" 
+        file="bista_edu.report_fee_receipt"
+        attachment="(object.state in ('reg')) and
+        ('RegFee'+(object.enquiry_no or '').replace('/','')+'.pdf')"
+    />
+    
+<template id="report_fee_receipt">
+    <t t-foreach="docs" t-as="o">
+    <t t-call="bista_edu.custom_receipt_external_layout">
+        <div class="page">
+            <div class="oe_structure"/>
+            <div class="row mt32 mb32">
+                <div><center><h1>Registration Fee Receipt</h1></center></div><br/><br/><br/>
+                <div class="col-xs-6">
+                    <strong>Enquiry No:  <span t-field="o.enquiry_no"/></strong>
+                </div>
+                <div class="col-xs-6">
+                    <strong>Class:  <span t-field="o.course_id.name"/></strong>
+                </div>
+                <div class="col-xs-6">
+                    <strong>Receipt No:  <span t-field="o.reg_fee_receipt.name"/></strong>
+                </div>
+            </div>
+            <div class="row mt32 mb32">
+                <div class="col-xs-6">
+                    <strong>Name:  <span t-field="o.parent_name"/> </strong>
+                </div>
+                <div class="col-xs-6">
+                    <strong>Date:   <t t-if="o.trx_date"> <span   t-esc="time.strftime('%d/%m/%Y',time.strptime(o.trx_date,'%Y-%m-%d'))"/></t> </strong>
+                </div>                
+            </div>
+            <table class="table table-bordered" width="100%" height="100%" style="border: 2px solid #000000;font-size:13px">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid black;"><strong>SI.No.</strong></th>
+                        <th class="text-center"  style="border: 1px solid black;"><strong>Description</strong></th>
+                        <th class="text-right" style="border: 1px solid black;"><strong>Amount</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-set="foo" t-value="0"/>
+                    
+                    <t t-if="o.state == 'reg'" >
+                        <tr t-foreach="o.reg_fee_line" t-as="line">
+                            <t t-set="foo" t-value="foo+1"/>
+                            <td style="border: 1px solid black;">
+                               <t t-esc="foo"/>
+                            </td>
+                            <td class="text-center" style="border: 1px solid black;">
+                              <strong> <span  t-field="line.name.name"/> by  <span t-field="o.reg_fee_receipt.journal_id.name"/> </strong>
+                            </td>
+                            <td class="text-right"  style="border: 1px solid black;">
+                                <span t-field="line.amount"/>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border: 1px solid black;" t-foreach="o.reg_fee_line" t-as="line">
+                            <td class="text-left" style="border: 1px solid black;">
+                                <strong>Total</strong>
+                             </td>
+                             <td><strong>AED: <span t-esc="o.amount_to_text(line.amount)"/> </strong></td>
+                             <td class="text-right" style="border: 1px solid black;">
+                                 <strong><span t-field="line.amount"/></strong>
+                             </td> 
+                        </tr>
+                    </t>
+                    
+                </tbody>
+                
+            </table>
+            <div class="row mt32 mb32">
+                <div class="col-xs-12" style="text-align:right">
+                    <p>This is a computer generated invoice and does not require signature. Online, cheque and bank transfer payment subject to realisation.</p>
+                    
+                </div>
+            </div>
+            <div class="oe_structure"/>
+        </div>
+    </t>
+    </t>
+</template>
+
+</data>
+</openerp>
+    
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- ============== TC Student Code ==================== -->
+
+        <record id="seq_type_tc" model="ir.sequence.type">
+            <field name="name">TC Student</field>
+            <field name="code">trensfer.certificate.form</field>
+        </record>
+
+        <record id="seq_tc" model="ir.sequence">
+            <field name="name">TC Student</field>
+            <field name="code">trensfer.certificate.form</field>
+            <field name="prefix">TC</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</openerp>
